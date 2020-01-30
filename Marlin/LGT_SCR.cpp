@@ -148,7 +148,7 @@ uint8_t led_times = 1, led_status=0;
 int led_counter = 0;
 /*************************************
 FUNCTION:	The state of LED lamp
-LED:	Color of LED lamp;(LED_RED¡¢LED_GREEN¡¢LED_BLUE)
+LED:	Color of LED lamp;(LED_REDï¿½ï¿½LED_GREENï¿½ï¿½LED_BLUE)
 **************************************/
 void LGT_SCR::LED_Bright_State(uint8_t LED, uint16_t per, uint8_t mod)
 {
@@ -744,7 +744,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = 10 + level_z_height;
@@ -756,7 +756,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		case eBT_MOVE_Z_MINUS_0:
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 10;
-#ifdef U30_Pro
+#ifdef U30_Pro && !U30_Pro_AutoBed
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -765,7 +765,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 10;
@@ -781,7 +781,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height + 1;
@@ -794,7 +794,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 1;
-#ifdef U30_Pro
+#ifdef U30_Pro && !U30_Pro_AutoBed
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -803,7 +803,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 1;
@@ -819,7 +819,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height + 0.1;
@@ -831,7 +831,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		case eBT_MOVE_Z_MINUS_2:
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 0.1;
-#ifdef U30_Pro
+#ifdef U30_Pro && !U30_Pro_AutoBed
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -840,7 +840,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro
+#ifdef U20_Pro || U30_Pro_AutoBed
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 0.1;
@@ -1306,7 +1306,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 				}
 			#endif
 			break;
-	#ifdef U20_Pro
+	#ifdef U20_Pro || U30_Pro_AutoBed
 		case eBT_UTILI_LEVEL_MEASU_START:  // == PREVIOUS
 			LGT_Change_Page(ID_DIALOG_LEVEL_WAIT);
 			level_z_height = 0;
