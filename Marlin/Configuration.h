@@ -115,6 +115,7 @@
 				#else
 					//U30_Pro
 					#define U30_Pro
+					#define U30_Pro_AutoBed
 				#endif
 		#endif // LGT_MAC	
 	#endif // serial_port1
@@ -536,7 +537,9 @@
   //#define ENDSTOPPULLUP_XMIN
   //#define ENDSTOPPULLUP_YMIN
   //#define ENDSTOPPULLUP_ZMIN
-  //#define ENDSTOPPULLUP_ZMIN_PROBE
+  #if ENABLED(U30_Pro_AutoBed)
+    #define ENDSTOPPULLUP_ZMIN_PROBE
+  #endif
 #endif
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
 #define X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
@@ -549,8 +552,11 @@
 #define X_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define Z_MIN_PROBE_ENDSTOP_INVERTING false // set to true to invert the logic of the probe.
-
+#if ENABLED(U30_Pro_AutoBed)
+    #define Z_MIN_PROBE_ENDSTOP_INVERTING true // set to true to invert the logic of the probe.
+#else
+    #define Z_MIN_PROBE_ENDSTOP_INVERTING false
+#endif
 /**
  * Stepper Drivers
  *
@@ -746,7 +752,9 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-//#define BLTOUCH
+#if ENABLED(U30_Pro_AutoBed)
+    #define BLTOUCH
+#endif
 #if ENABLED(BLTOUCH)
   //#define BLTOUCH_DELAY 375   // (ms) Enable and increase if needed
 #endif
@@ -795,9 +803,15 @@
  *      O-- FRONT --+
  *    (0,0)
  */
-#define X_PROBE_OFFSET_FROM_EXTRUDER -30//-23  // X offset: -left  +right  [of the nozzle]
-#define Y_PROBE_OFFSET_FROM_EXTRUDER -3//0 // Y offset: -front +behind [the nozzle]
-#define Z_PROBE_OFFSET_FROM_EXTRUDER 0 //0  // Z offset: -below +above  [the nozzle]
+#if ENABLED(U30_Pro_AutoBed)
+    #define X_PROBE_OFFSET_FROM_EXTRUDER -35//-23  // X offset: -left  +right  [of the nozzle]
+    #define Y_PROBE_OFFSET_FROM_EXTRUDER -5//0 // Y offset: -front +behind [the nozzle]
+    #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 //0  // Z offset: -below +above  [the nozzle]
+#else
+    #define X_PROBE_OFFSET_FROM_EXTRUDER -30//-23  // X offset: -left  +right  [of the nozzle]
+    #define Y_PROBE_OFFSET_FROM_EXTRUDER -3//0 // Y offset: -front +behind [the nozzle]
+    #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 //0  // Z offset: -below +above  [the nozzle]
+#endif
 
 // Certain types of probes need to stay away from edges
 #define MIN_PROBE_EDGE 10
@@ -842,7 +856,9 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-//#define Z_MIN_PROBE_REPEATABILITY_TEST
+#if ENABLED(U30_Pro_AutoBed)
+    #define Z_MIN_PROBE_REPEATABILITY_TEST
+#endif
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 // :{ 0:'Low', 1:'High' }
@@ -941,7 +957,9 @@
 #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
   #define MIN_SOFTWARE_ENDSTOP_X
   #define MIN_SOFTWARE_ENDSTOP_Y
-  #define MIN_SOFTWARE_ENDSTOP_Z
+  #if DISABLED(U30_Pro_AutoBed)
+    #define MIN_SOFTWARE_ENDSTOP_Z
+  #endif
 #endif
 
 // Max software endstops constrain movement within maximum coordinate bounds
@@ -1016,7 +1034,7 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-#if ENABLED (U20_Pro_AutoBed)
+#if ENABLED (U20_Pro_AutoBed) || ENABLED (U30_Pro_AutoBed)
 	#define AUTO_BED_LEVELING_BILINEAR
 #endif
 //#define AUTO_BED_LEVELING_BILINEAR
@@ -1027,7 +1045,9 @@
  * Normally G28 leaves leveling disabled on completion. Enable
  * this option to have G28 restore the prior leveling state.
  */
-//#define RESTORE_LEVELING_AFTER_G28
+ #if ENABLED (U30_Pro_AutoBed)
+    #define RESTORE_LEVELING_AFTER_G28
+#endif
 
 /**
  * Enable detailed logging of G28, G29, M48, etc.
@@ -1064,7 +1084,7 @@
 #if ENABLED(AUTO_BED_LEVELING_LINEAR) || ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-#if ENABLED (U20_Pro_AutoBed)
+#if ENABLED (U20_Pro_AutoBed) || ENABLED (U30_Pro_AutoBed)
 	#define GRID_MAX_POINTS_X 4
 #else
 	//#define GRID_MAX_POINTS_X 3
@@ -1072,10 +1092,17 @@
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Set the boundaries for probing (where the probe can reach).
-  #define LEFT_PROBE_BED_POSITION  50
-  #define RIGHT_PROBE_BED_POSITION 210
-  #define FRONT_PROBE_BED_POSITION 47
-  #define BACK_PROBE_BED_POSITION  247
+  #if ENABLED (U30_Pro_AutoBed)
+    #define LEFT_PROBE_BED_POSITION  10
+    #define RIGHT_PROBE_BED_POSITION 185
+    #define FRONT_PROBE_BED_POSITION 10
+    #define BACK_PROBE_BED_POSITION  210
+  #else
+    #define LEFT_PROBE_BED_POSITION  50
+    #define RIGHT_PROBE_BED_POSITION 210
+    #define FRONT_PROBE_BED_POSITION 47
+    #define BACK_PROBE_BED_POSITION  247
+  #endif
 
   // Probe along the Y axis, advancing X after each column
   //#define PROBE_Y_FIRST
@@ -1189,7 +1216,7 @@
 // - Move the Z probe (or nozzle) to a defined XY point before Z Homing when homing all axes (G28).
 // - Prevent Z homing when the Z probe is outside bed area.
 //
-#if ENABLED (U20_Pro_AutoBed)
+#if ENABLED (U20_Pro_AutoBed) || ENABLED (U30_Pro_AutoBed)
 	#define Z_SAFE_HOMING
 #else
 	//#define Z_SAFE_HOMING
