@@ -1424,18 +1424,13 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 
 ////////////////////////////////
 ///////// Bruno Add
-  case eBT_MBL_START:      
-          thermalManager.setTargetBed(60);
-     thermalManager.setTargetHotend(PLA_E_TEMP, target_extruder);
-          mbl_count=1;
-          enqueue_and_echo_commands_P(PSTR("G29 S1"));
-
-              LGT_Change_Page(ID_MENU_MBL_START);
+  case eBT_MBL_START:
+            mbl_count=1;
+            enqueue_and_echo_commands_P(PSTR("G29 S1"));
+            LGT_Change_Page(ID_MENU_MBL_START);
             menu_type = eMENU_leveling_MBL;
-         
      break;
-       case eBT_MBL_NEXT:
-        
+     case eBT_MBL_NEXT:
        if (mbl_count==(GRID_MAX_POINTS_Y * GRID_MAX_POINTS_X )) { // si tous les points sont fait 
             mbl_count=0;
             enqueue_and_echo_commands_P(PSTR("G29 S2"));
@@ -1449,24 +1444,35 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
              mbl_count++;
        }
       break;
-       case eBT_MBL_Save:
+      case eBT_MBL_Save:
             thermalManager.setTargetBed(0);
             enqueue_and_echo_commands_P(PSTR("M500"));
       break;
-      case eBT_UTIL_Settings:
-
-      dtostrf(81.985, 8, 2, steps_mm_Y);
-        dtostrf(planner.axis_steps_per_mm[0], 8, 3, steps_mm_X);
-        //dtostrf(AXIS_STEPS_PER_UNIT_arr[2], 6, 3, steps_mm_Z);
-          //planner.axis_steps_per_mm[i] 
-    LGT_Send_Data_To_Screen1(ADDR_TXT_SETTINGS_StepPerUnit_X,steps_mm_X);
-        LGT_Send_Data_To_Screen1(ADDR_TXT_SETTINGS_StepPerUnit_Y,steps_mm_Y);
-      //  LGT_Send_Data_To_Screen1(ADDR_TXT_SETTINGS_StepPerUnit_Z,steps_mm_Z);
-           LGT_Change_Page(ID_MENU_SETTINGS);
+      case eBT_UTILI_LEVEL_BLT_Up:
+            enqueue_and_echo_commands_P(PSTR("M280 P0 S90"));
+      break;
+      case eBT_UTILI_LEVEL_BLT_Down:
+            enqueue_and_echo_commands_P(PSTR("M280 P0 S10"));
+      break;
+      case eBT_UTILI_LEVEL_BLT_Ofs_Up:
+            //TODO: Add commands to add 0.01 to Z offset
+      break;
+      case eBT_UTILI_LEVEL_BLT_Ofs_Down:
+            //TODO: Add commands to remove 0.01 to Z offset
+      break;
+      case eBT_UTILI_LEVEL_BLT_Ofs_RelAlarm:
+            enqueue_and_echo_commands_P(PSTR("M280 P0 S160"));
+      break;
+      case eBT_UTILI_LEVEL_BLT_Ofs_StartLevelling:
+            if (xyz_home == false)
+            {
+                enqueue_and_echo_commands_P(PSTR("G28"));
+                xyz_home = true;
+            }
+            enqueue_and_echo_commands_P(PSTR("G29"));
       break;
 ////////////////////////////////
 ///////// Bruno FIN
-
 
 #ifdef U20_Pro
 		case eBT_TUNE_SWITCH_LEDS:
@@ -1696,7 +1702,13 @@ void LGT_SCR::LGT_Printer_Data_Updata()
         LGT_Send_Data_To_Screen(ADDR_VAL_CUR_B, (int16_t)thermalManager.current_temperature_bed);
         LGT_Send_Data_To_Screen(ADDR_VAL_CUR_E, (int16_t)thermalManager.current_temperature[0]);
 
-        
+
+    break;
+
+    case eMENU_leveling_BLT:
+        LGT_Send_Data_To_Screen(ADDR_VAL_MOVE_POS_Z, (int16_t)(current_position[Z_AXIS] * 100));
+        LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN, (int16_t)(zprobe_zoffset * 100));
+        //TODO: Add LGT_Send_Data_To_Screen to update Z offset ???
     break;
 	
 	case eMENU_PRINT_HOME:

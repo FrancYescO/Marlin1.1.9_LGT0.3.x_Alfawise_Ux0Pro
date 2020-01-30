@@ -255,8 +255,14 @@ enum E_BUTTON_KEY {
   eBT_MBL_START, // Added Bruno 69 - 0045 G29 S1
   eBT_MBL_NEXT, // Added Bruno 70 - 0046 G29 S2
   eBT_MBL_Save, // Added Bruno 71 - 0047 M500
-  eBT_UTIL_Settings  //Added Bruno 72 - 0048
-  
+  eBT_UTIL_Settings,  //Added Bruno 72 - 0048
+
+    eBT_UTILI_LEVEL_BLT_Up, //0049
+    eBT_UTILI_LEVEL_BLT_Down, //004A
+    eBT_UTILI_LEVEL_BLT_Ofs_Up,
+    eBT_UTILI_LEVEL_BLT_Ofs_Down,
+    eBT_UTILI_LEVEL_BLT_Ofs_RelAlarm,
+    eBT_UTILI_LEVEL_BLT_Ofs_StartLevelling
 };
 
 enum E_MENU_TYPE {
@@ -273,8 +279,9 @@ enum E_MENU_TYPE {
 	eMENU_UTILI_FILA,
 	eMENU_PRINT_HOME,   // 10   
 	eMENU_HOME_FILA,
-	eMENU_FILE	,	//12
-  eMENU_leveling_MBL  // ADD Bruno
+	eMENU_FILE,	        //12
+  eMENU_leveling_MBL,  // ADD Bruno
+    eMENU_leveling_BLT
 };
 
 #define ID_MENU_HOME                (1)
@@ -300,7 +307,7 @@ enum E_MENU_TYPE {
 #define ID_DIALOG_UTILI_FILA_LOAD	(140)
 #define ID_DIALOG_UTILI_FILA_UNLOAD	(141)
 #define ID_DIALOG_LOAD_FINISH       (144)
-#define ID_DIALOG_MBL_FINISH       (154) // Ajout Bruno
+#define ID_DIALOG_MBL_FINISH        (154) // Ajout Bruno
 
 
 #define ID_DIALOG_PRINT_FILA_WAIT	(134)
@@ -316,8 +323,9 @@ enum E_MENU_TYPE {
 #define ID_MENU_MEASU_S2            (114)
 #define ID_MENU_MEASU_S3            (116)
 #define ID_MENU_MEASU_FINISH        (123)
-#define ID_MENU_MBL_START      (152) // Ajout Bruno
-#define ID_MENU_SETTINGS        (155)
+#define ID_MENU_MBL_START           (152) // Ajout Bruno
+#define ID_MENU_SETTINGS            (155)
+#define ID_MENU_BLT                 (156)
 //===========================================================================
 //===========================   PRINTER ABOUT   =============================
 //===========================================================================
