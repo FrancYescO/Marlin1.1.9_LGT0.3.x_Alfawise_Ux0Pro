@@ -12896,7 +12896,7 @@ void process_parsed_command() {
       #endif
 
       case 28: gcode_G28(false);
-		#if ENABLED(U20_Pro_AutoBed)
+		#if ENABLED(U20_Pro_AutoBed) || ENABLED(U30_Pro_AutoBed)
 			set_bed_leveling_enabled(true);
 		#endif
 		  break;                           // G28: Home one or more axes
@@ -13336,6 +13336,16 @@ void process_parsed_command() {
       case 999: gcode_M999(); break;                              // M999: Restart after being Stopped
 #ifdef LGT_MAC
 	  case 2000:   //stop printing and return to home menu
+            if (leveling_sta ==1)   //ok
+            {
+                leveling_sta = 0;
+                if (LGT_is_printing == false)
+                {
+                    LGT_LCD.LGT_Change_Page(ID_MENU_MEASU_FINISH);
+                    disable_all_steppers();
+                }
+                break;
+            }
 		  relative_mode = false;
 		  gcode_M18_M84();
 		  LGT_is_printing = false;
@@ -13353,7 +13363,7 @@ void process_parsed_command() {
 		  LGT_Pause_Move();
 		  LGT_LCD.LGT_Change_Page(ID_MENU_PRINT_HOME_PAUSE);
 		  break;
-	#ifdef U20_Pro
+	#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 	  case 2002:	// wait for levelling measuring 
 		  planner.synchronize();
 		  LGT_LCD.LGT_Change_Page(ID_MENU_MEASU_S1 + 1);

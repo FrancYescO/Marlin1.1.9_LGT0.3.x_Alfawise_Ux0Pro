@@ -17,7 +17,7 @@ int gcode_id[FILE_LIST_NUM], sel_fileid =-1;
 int gcode_num=0;
 millis_t recovery_time=0;
 uint8_t recovery_percent = 0;
-float level_z_height = 0.0;
+float level_z_height = zprobe_zoffset * -1;
 float recovery_z_height = 0.0,recovery_E_len=0.0;
 float resume_x_position=0.0,resume_y_position=0.0,resume_e_position= 0.0;
 bool sd_init_flag = true;
@@ -25,7 +25,7 @@ bool tartemp_flag = false;
 bool LGT_is_printing = false;
 bool LGT_stop_printing = false;
 bool return_home = false;
-#ifdef U20_Pro
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 	bool led_on = true;
 #endif // U20_Pro
 bool xy_home = false;
@@ -744,7 +744,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = 10 + level_z_height;
@@ -756,7 +756,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		case eBT_MOVE_Z_MINUS_0:
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 10;
-#ifdef U30_Pro && !U30_Pro_AutoBed
+#if defined(U30_Pro) && !defined(U30_Pro_AutoBed)
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -765,7 +765,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 10;
@@ -781,7 +781,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height + 1;
@@ -794,7 +794,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 1;
-#ifdef U30_Pro && !U30_Pro_AutoBed
+#if defined(U30_Pro) && !defined(U30_Pro_AutoBed)
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -803,7 +803,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 1;
@@ -819,7 +819,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					current_position[Z_AXIS] = Z_MAX_POS;
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height + 0.1;
@@ -831,7 +831,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		case eBT_MOVE_Z_MINUS_2:
 //			if (current_position[Z_AXIS] > Z_MIN_POS) {
 				current_position[Z_AXIS] = current_position[Z_AXIS] - 0.1;
-#ifdef U30_Pro && !U30_Pro_AutoBed
+#if defined(U30_Pro) && !defined(U30_Pro_AutoBed)
 				if (xyz_home == true || z_home == true)
 				{
 					if (current_position[Z_AXIS] < Z_MIN_POS)
@@ -840,7 +840,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 #endif // U30_Pro
 				LGT_Line_To_Current(Z_AXIS);
 
-#ifdef U20_Pro || U30_Pro_AutoBed
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 				if (menu_type != eMENU_MOVE)
 				{
 					level_z_height = level_z_height - 0.1;
@@ -940,6 +940,13 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 				enqueue_and_echo_commands_P(PSTR("G28"));
 				xy_home = true;
 			#else
+			    #ifdef U30_Pro_AutoBed
+                    if (xy_home == false)
+                    {
+                        enqueue_and_echo_commands_P(PSTR("G28 X0 Y0"));
+                        xy_home = true;
+                    }
+                 #endif
 				enqueue_and_echo_commands_P(PSTR("G28 Z0")); //U30_Pro
 				z_home = true;
 			#endif
@@ -1306,20 +1313,30 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 				}
 			#endif
 			break;
-	#ifdef U20_Pro || U30_Pro_AutoBed
+	#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 		case eBT_UTILI_LEVEL_MEASU_START:  // == PREVIOUS
 			LGT_Change_Page(ID_DIALOG_LEVEL_WAIT);
-			level_z_height = 0;
-			LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,0);
+			LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,level_z_height);
 			menu_measu_step = 1;
 			menu_measu_dis_chk = 1;
-			thermalManager.setTargetHotend(0, target_extruder);
-			thermalManager.setTargetBed(0);
-			enqueue_and_echo_commands_P(PSTR("G28 X0 Y0"));
-//			enqueue_and_echo_commands_P(PSTR("G1 X150 Y150 F3000"));
-			enqueue_and_echo_commands_P(PSTR("G1 X180 Y153 F3000"));
-			enqueue_and_echo_commands_P(PSTR("M2002"));
-			xy_home = true;
+            thermalManager.setTargetHotend(0, target_extruder);
+            thermalManager.setTargetBed(0);
+			#if defined(U30_Pro_AutoBed)
+				if (xyz_home == false)
+				{
+					enqueue_and_echo_commands_P(PSTR("G28"));
+					xyz_home = true;
+				}
+				enqueue_and_echo_commands_P(PSTR("G1 Z10"));
+				enqueue_and_echo_commands_P(PSTR("G1 X110 Y110 F3000"));
+				enqueue_and_echo_commands_P(PSTR("G1 Z0"));
+                enqueue_and_echo_commands_P(PSTR("M2002"));
+			#else
+                enqueue_and_echo_commands_P(PSTR("G28 X0 Y0"));
+                enqueue_and_echo_commands_P(PSTR("G1 X180 Y153 F3000"));
+                enqueue_and_echo_commands_P(PSTR("M2002"));
+                xy_home = true;
+			#endif
 			break;
 		case eBT_UTILI_LEVEL_MEASU_DIS_0:
 			menu_measu_dis_chk = 0;
@@ -1334,9 +1351,20 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		case eBT_UTILI_LEVEL_MEASU_S2_NEXT:
 			menu_measu_step = 3;
 			menu_measu_dis_chk = 1;
-			settings.reset();
-			enqueue_and_echo_commands_P(PSTR("G28"));
-			enqueue_and_echo_commands_P(PSTR("G29"));
+			#if defined(U30_Pro_AutoBed)
+                settings.reset();
+			    zprobe_zoffset = level_z_height * -1; //save the new Z Offset
+                //Start UBL, enable it and save to EEPROM
+                enqueue_and_echo_commands_P(PSTR("G29 P1"));
+                enqueue_and_echo_commands_P(PSTR("G29 S1"));
+                enqueue_and_echo_commands_P(PSTR("G29 A"));
+                enqueue_and_echo_commands_P(PSTR("M500"));
+                enqueue_and_echo_commands_P(PSTR("M2000"));
+            #else
+                settings.reset();
+                enqueue_and_echo_commands_P(PSTR("G28"));
+                enqueue_and_echo_commands_P(PSTR("G29"));
+			#endif
 			break;
 		case eBT_UTILI_LEVEL_MEASU_S1_EXIT_NO:
 			LGT_Change_Page(ID_MENU_MEASU_S1 + menu_measu_dis_chk);
@@ -1353,8 +1381,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			LGT_Change_Page(ID_MENU_MEASU_S3);
 			break;
 		case eBT_UTILI_LEVEL_MEASU_STOP_MOVE:
-			level_z_height = 0;
-			LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN, 0);
+			LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN, level_z_height);
 			clear_command_queue();
 			quickstop_stepper();
 			enqueue_and_echo_commands_P(PSTR("M17"));
@@ -1370,17 +1397,19 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			menu_move_dis_chk = 2;
 			break;
 
-#ifdef U20_Pro
+#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 		case eBT_TUNE_SWITCH_LEDS:
 			led_on = !led_on;
 			if (led_on == false)
 			{
+			    enqueue_and_echo_commands_P(PSTR("M355 S1"));
 				LED_Bright_State(LED_BLUE, 10, 0);  //close LED
 				LGT_Send_Data_To_Screen(ADDR_VAL_LEDS_SWITCH, 1);
 				delay(5);
 			}
 			else
 			{
+			    enqueue_and_echo_commands_P(PSTR("M355 S0"));
 				LGT_Send_Data_To_Screen(ADDR_VAL_LEDS_SWITCH, 0);
 				delay(5);
 			}
