@@ -9486,6 +9486,16 @@ inline void gcode_M117() {
     lcd_setstatus(parser.string_arg);
   else
     lcd_reset_status();
+  LGT_LCD.LGT_Send_Data_To_Screen1(ADDR_TXT_HOME_FILE_NAME,parser.string_arg);
+  if (strncmp((char*)parser.string_arg, "Printing...", 9) == 0)
+  {
+     LGT_LCD.LGT_Printer_Data_Updata();
+     LGT_LCD.LGT_Send_Data_To_Screen(ADDR_VAL_ICON_HIDE, 0);
+     LGT_LCD.LGT_Change_Page(ID_MENU_PRINT_HOME);
+  } else if (strncmp((char*)parser.string_arg, "Print Done", 9) == 0) {
+    LGT_LCD.LGT_Exit_Print_Page();
+    LGT_LCD.LGT_Change_Page(ID_MENU_HOME);
+  }
 }
 
 /**
