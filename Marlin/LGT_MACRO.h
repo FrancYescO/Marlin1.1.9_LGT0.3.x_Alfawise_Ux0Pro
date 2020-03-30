@@ -64,10 +64,10 @@
 	#define FILAMENT_RUNOUT_MOVE_Y 200
 	#define FILAMENT_RUNOUT_MOVE_F 50
 #endif // U20_Pro
-#define	BOARD_FW_VER    "Marlin1.1.9 LGT0.3.1" 
+#define	BOARD_FW_VER    "Marlin1.1.9 LGT0.3.2"
 // DWIN system variable address
 #define DW_ADDR_CHANGE_PAGE 0x0084
-#define DW_PAGE_VAR_BASE 0x5A010000UL 
+#define DW_PAGE_VAR_BASE 0x5A010000UL
 
 // user defined variable address
 #define ADDR_USER_VAR_BASE                  (0x1000)
@@ -84,7 +84,7 @@
 #define ADDR_VAL_ICON_HIDE                  (ADDR_VAL_TAR_B+LEN_WORD)                       //1018
 // TUNE
 #define ADDR_VAL_FAN                        (0x1030)                                        // 1030
-#define ADDR_VAL_FEED                       (ADDR_VAL_FAN + LEN_WORD)                       // 1032    
+#define ADDR_VAL_FEED                       (ADDR_VAL_FAN + LEN_WORD)                       // 1032
 #define ADDR_VAL_FLOW                       (ADDR_VAL_FEED + LEN_WORD)                      // 1034
 #define ADDR_VAL_LEDS_SWITCH                (ADDR_VAL_FLOW + LEN_WORD)                      // 1036
 #define ADDR_VAL_CUR_FEED                   (ADDR_VAL_LEDS_SWITCH+LEN_WORD)                  //1038
@@ -93,19 +93,19 @@
 #define ADDR_VAL_LEVEL_Z_UP_DOWN             (ADDR_VAL_CUR_FEED+LEN_WORD)                   //103A
 
 // MOVE
-#define ADDR_VAL_MOVE_POS_X                 (0x1050)                                        // 1050                  
+#define ADDR_VAL_MOVE_POS_X                 (0x1050)                                        // 1050
 #define ADDR_VAL_MOVE_POS_Y                 (ADDR_VAL_MOVE_POS_X + LEN_WORD)                // 1052
 #define ADDR_VAL_MOVE_POS_Z                 (ADDR_VAL_MOVE_POS_Y + LEN_WORD)                // 1054
 #define ADDR_VAL_MOVE_POS_E                 (ADDR_VAL_MOVE_POS_Z + LEN_WORD)                // 1056
 // PRINT
 	//... FILE
-#define ADDR_TXT_PRINT_FILE_ITEM_0      (0x1070)                                        // 1070 
+#define ADDR_TXT_PRINT_FILE_ITEM_0      (0x1070)                                        // 1070
 #define ADDR_TXT_PRINT_FILE_ITEM_1      (ADDR_TXT_PRINT_FILE_ITEM_0 + LEN_FILE_NAME)    // 1090
 #define ADDR_TXT_PRINT_FILE_ITEM_2      (ADDR_TXT_PRINT_FILE_ITEM_1 + LEN_FILE_NAME)    // 10B0
 #define ADDR_TXT_PRINT_FILE_ITEM_3      (ADDR_TXT_PRINT_FILE_ITEM_2 + LEN_FILE_NAME)    // 10D0
 #define ADDR_TXT_PRINT_FILE_ITEM_4      (ADDR_TXT_PRINT_FILE_ITEM_3 + LEN_FILE_NAME)    // 10F0
 
-#define ADDR_TXT_PRINT_FILE_ITEM_5      (ADDR_TXT_PRINT_FILE_ITEM_4 + LEN_FILE_NAME)    // 1110 
+#define ADDR_TXT_PRINT_FILE_ITEM_5      (ADDR_TXT_PRINT_FILE_ITEM_4 + LEN_FILE_NAME)    // 1110
 #define ADDR_TXT_PRINT_FILE_ITEM_6      (ADDR_TXT_PRINT_FILE_ITEM_5 + LEN_FILE_NAME)    // 1130
 #define ADDR_TXT_PRINT_FILE_ITEM_7      (ADDR_TXT_PRINT_FILE_ITEM_6 + LEN_FILE_NAME)    // 1150
 #define ADDR_TXT_PRINT_FILE_ITEM_8      (ADDR_TXT_PRINT_FILE_ITEM_7 + LEN_FILE_NAME)    // 1170
@@ -140,8 +140,8 @@
 	// filament
 #define ADDR_VAL_UTILI_FILA_CHANGE_LEN  (0x1440)                                        // 1440
 #define ADDR_VAL_FILA_CHANGE_TEMP       (ADDR_VAL_UTILI_FILA_CHANGE_LEN + LEN_WORD)     // 1442
-// DIALOG NO TEMP    
-#define ADDR_VAL_EXTRUDE_TEMP               (0x1460)                                        // 1460    
+// DIALOG NO TEMP
+#define ADDR_VAL_EXTRUDE_TEMP               (0x1460)                                        // 1460
 // ABOUT
 #define ADDR_TXT_ABOUT_MODEL                (0x1480)                                        // 1480
 #define ADDR_TXT_ABOUT_SIZE                 (ADDR_TXT_ABOUT_MODEL + LEN_FILE_NAME)          // 14A0
@@ -150,9 +150,9 @@
 #define ADDR_TXT_ABOUT_WORK_TIME_MAC         (ADDR_TXT_ABOUT_FW_BOARD+LEN_FILE_NAME)        //1500
 // FILE SELECT
 #define ADDR_VAL_PRINT_FILE_SELECT          (0x1550)                                        // 1550
-#define ADDR_TXT_PRINT_FILE_SELECT          (ADDR_VAL_PRINT_FILE_SELECT + LEN_WORD)         // 1552  
+#define ADDR_TXT_PRINT_FILE_SELECT          (ADDR_VAL_PRINT_FILE_SELECT + LEN_WORD)         // 1552
 
-#define ADDR_KILL_REASON                     (0x2000) 
+#define ADDR_KILL_REASON                     (0x2000)
 
 // SP definition
 #define SP_TXT_PRINT_FILE_ITEM_0            (0x6000)                                        // 6000
@@ -164,7 +164,7 @@
 // color
 #define COLOR_LIGHT_RED                     (0xA001)
 #define COLOR_WHITE							(0xFFFF)
-// color_change(SP_TXT_PRINT_FILE_ITEM_0 + i*LEN_FILE_NAME, COLOR_LIGHT_RED)  
+// color_change(SP_TXT_PRINT_FILE_ITEM_0 + i*LEN_FILE_NAME, COLOR_LIGHT_RED)
 
 
 enum E_BUTTON_KEY {
@@ -180,7 +180,7 @@ enum E_BUTTON_KEY {
 	eBT_MOVE_E_PLUS_0,
 	eBT_MOVE_E_MINUS_0,
 
-	eBT_MOVE_X_PLUS_1,          // 10  000A 
+	eBT_MOVE_X_PLUS_1,          // 10  000A
 	eBT_MOVE_X_MINUS_1,
 	eBT_MOVE_Y_PLUS_1,
 	eBT_MOVE_Y_MINUS_1,
@@ -233,7 +233,7 @@ enum E_BUTTON_KEY {
 	eBT_UTILI_LEVEL_MEASU_S2_EXIT_NO,
 	eBT_UTILI_LEVEL_MEASU_EXIT_OK,     //55  0037
 	eBT_UTILI_LEVEL_MEASU_S3_EXIT_NO,
-	eBT_MOVE_P0,       
+	eBT_MOVE_P0,
 	eBT_MOVE_P1,
 	eBT_MOVE_P2,
 	eBT_TUNE_SWITCH_LEDS,			//60  003C
@@ -255,9 +255,9 @@ enum E_MENU_TYPE {
 	eMENU_TUNE_B,
 	eMENU_TUNE_FAN,     // 6
 	eMENU_TUNE_SPEED,
-	eMENU_TUNE_FLOW,    // 8 
+	eMENU_TUNE_FLOW,    // 8
 	eMENU_UTILI_FILA,
-	eMENU_PRINT_HOME,   // 10   
+	eMENU_PRINT_HOME,   // 10
 	eMENU_HOME_FILA,
 	eMENU_FILE			//12
 
