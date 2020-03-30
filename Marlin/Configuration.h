@@ -106,7 +106,7 @@
 // @section machine
 #define serial_port1
 	#ifdef serial_port1
-		#define LGT_MAC	
+		#define LGT_MAC
 		#ifdef LGT_MAC
 			//U20_Pro
 //			#define U20_Pro
@@ -117,7 +117,7 @@
 					#define U30_Pro
 					#define U30_Pro_AutoBed
 				#endif
-		#endif // LGT_MAC	
+		#endif // LGT_MAC
 	#endif // serial_port1
 /**
  * Select the serial port on the board to use for communication with the host.
@@ -145,7 +145,7 @@
 // The following define selects which electronics board you have.
 // Please choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD 33  
+  #define MOTHERBOARD 33
 #endif
 
 // Optional custom name for your RepStrap or other custom machine
@@ -828,7 +828,7 @@
 // The number of probes to perform at each point.
 //   Set to 2 for a fast/slow probe, using the second probe result.
 //   Set to 3 or more for slow probes, averaging the results.
-//#define MULTIPLE_PROBING 2
+#define MULTIPLE_PROBING 2
 
 /**
  * Z probes require clearance when deploying, stowing, and moving between

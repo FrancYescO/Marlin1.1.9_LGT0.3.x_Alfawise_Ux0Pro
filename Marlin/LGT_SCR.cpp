@@ -1316,7 +1316,6 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 	#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
 		case eBT_UTILI_LEVEL_MEASU_START:  // == PREVIOUS
 			LGT_Change_Page(ID_DIALOG_LEVEL_WAIT);
-			LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,level_z_height);
 			menu_measu_step = 1;
 			menu_measu_dis_chk = 1;
             thermalManager.setTargetHotend(0, target_extruder);
@@ -1352,14 +1351,15 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			menu_measu_step = 3;
 			menu_measu_dis_chk = 1;
 			#if defined(U30_Pro_AutoBed)
-                settings.reset();
+                //settings.reset();
 			    zprobe_zoffset = level_z_height * -1; //save the new Z Offset
                 //Start UBL, enable it and save to EEPROM
                 enqueue_and_echo_commands_P(PSTR("G29 P1"));
+                enqueue_and_echo_commands_P(PSTR("G29 P3"));
                 enqueue_and_echo_commands_P(PSTR("G29 S1"));
                 enqueue_and_echo_commands_P(PSTR("G29 A"));
                 enqueue_and_echo_commands_P(PSTR("M500"));
-                enqueue_and_echo_commands_P(PSTR("M2000"));
+                enqueue_and_echo_commands_P(PSTR("G29")); //Just to report the status back to screen
             #else
                 settings.reset();
                 enqueue_and_echo_commands_P(PSTR("G28"));

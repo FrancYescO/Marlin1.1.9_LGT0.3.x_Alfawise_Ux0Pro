@@ -783,7 +783,7 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
 		#if ENABLED(serial_port1)
 				MYSERIAL1.begin(BAUDRATE);
 		#endif
-		delay(600); 
+		delay(600);
 		status_type = PRINTER_SETUP;
 		#if ENABLED(POWER_LOSS_RECOVERY)
 			check_print_job_recovery();
@@ -823,7 +823,7 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
 		}
 	}
 #endif     // LGT_MAC
-////////////LGT_MAC END/////////////////////LGT_MAC END////////////////////////////////LGT_MAC END////////////////////////  
+////////////LGT_MAC END/////////////////////LGT_MAC END////////////////////////////////LGT_MAC END////////////////////////
 /*********************************************************************************
 ********************************************************************************/
 /**
@@ -1117,7 +1117,7 @@ inline void get_serial_commands() {
    * Loop while serial characters are incoming and the queue is not full
    */
   int c;
-  while (commands_in_queue < BUFSIZE && (((c = MYSERIAL0.read()) >= 0) )) 
+  while (commands_in_queue < BUFSIZE && (((c = MYSERIAL0.read()) >= 0) ))
   {
     char serial_char = c;
 
@@ -1199,7 +1199,7 @@ inline void get_serial_commands() {
             wait_for_user = false;
           #endif
         }
-		if (strcmp(command, "M112") == 0) { 
+		if (strcmp(command, "M112") == 0) {
 		#ifdef LGT_MAC
 			kill_type = M112_KILL;
 		#endif // LGT_MAC
@@ -1592,13 +1592,14 @@ static void set_axis_is_at_home(const AxisEnum axis) {
     }
     else
   #elif ENABLED(DELTA)
-    if (axis == Z_AXIS)
-      current_position[axis] = delta_height;
-    else
-  #endif
-  {
+    current_position[axis] = (axis == Z_AXIS ? delta_height
+    #if HAS_BED_PROBE
+      - zprobe_zoffset
+    #endif
+    : base_home_pos(axis));
+  #else
     current_position[axis] = base_home_pos(axis);
-  }
+  #endif
 
   /**
    * Z Probe Z Homing? Account for the probe's Z offset.
@@ -4153,7 +4154,11 @@ inline void gcode_G4() {
     #endif
 
     // Move all carriages together linearly until an endstop is hit.
-    current_position[X_AXIS] = current_position[Y_AXIS] = current_position[Z_AXIS] = (delta_height + 10);
+    current_position[X_AXIS] = current_position[Y_AXIS] = current_position[Z_AXIS] = (delta_height + 10
+      #if HAS_BED_PROBE
+        - zprobe_zoffset
+      #endif
+    );
     feedrate_mm_s = homing_feedrate(X_AXIS);
     buffer_line_to_current_position();
     planner.synchronize();
@@ -4402,27 +4407,19 @@ inline void gcode_G28(const bool always_home_all) {
           (parser.seenval('R') ? parser.value_linear_units() : Z_HOMING_HEIGHT)
     );
 
-	if (z_homing_height && (home_all || homeX || homeY)) {
-		// Raise Z before homing any other axes and z is not already high enough (never lower z)
-		if (current_position[Z_AXIS] >= 0)
-		{
-			destination[Z_AXIS] = z_homing_height;
-			if (destination[Z_AXIS] > current_position[Z_AXIS]) {
+    if (z_homing_height && (home_all || homeX || homeY)) {
+      // Raise Z before homing any other axes and z is not already high enough (never lower z)
+      destination[Z_AXIS] = z_homing_height;
+      if (destination[Z_AXIS] > current_position[Z_AXIS]) {
 
-#if ENABLED(DEBUG_LEVELING_FEATURE)
-				if (DEBUGGING(LEVELING))
-					SERIAL_ECHOLNPAIR("Raise Z (before homing) to ", destination[Z_AXIS]);
-#endif
+        #if ENABLED(DEBUG_LEVELING_FEATURE)
+          if (DEBUGGING(LEVELING))
+            SERIAL_ECHOLNPAIR("Raise Z (before homing) to ", destination[Z_AXIS]);
+        #endif
 
-				do_blocking_move_to_z(destination[Z_AXIS]);
-			}
-		}
-		else
-		{
-			do_blocking_move_to_z(current_position[Z_AXIS]+ Z_HOMING_HEIGHT);
-		}
+        do_blocking_move_to_z(destination[Z_AXIS]);
+      }
     }
-
 
     #if ENABLED(QUICK_HOME)
 
@@ -7356,7 +7353,7 @@ inline void gcode_M17() {
    *
    * Used by M125 and M600
    */
-  
+
   static void wait_for_filament_reload(const int8_t max_beep_count=0) {
     bool nozzle_timed_out = false;
 
@@ -7442,7 +7439,7 @@ inline void gcode_M17() {
     }
     KEEPALIVE_STATE(IN_HANDLER);
   }
- 
+
   /**
    * Resume or Start print procedure
    *
@@ -8514,7 +8511,7 @@ inline void gcode_M105() {
   inline void gcode_M112() {
 		#ifdef LGT_MAC
 			  kill_type = M112_KILL;
-		#endif // LGT_MAC 
+		#endif // LGT_MAC
 	  kill(PSTR(MSG_KILLED)); }
 
 
@@ -12912,7 +12909,7 @@ void process_parsed_command() {
 		  break;                           // G28: Home one or more axes
 
       #if HAS_LEVELING
-        case 29: gcode_G29(); 
+        case 29: gcode_G29();
 #ifdef LGT_MAC
 			if (leveling_sta ==1)   //ok
 			{
@@ -13346,16 +13343,6 @@ void process_parsed_command() {
       case 999: gcode_M999(); break;                              // M999: Restart after being Stopped
 #ifdef LGT_MAC
 	  case 2000:   //stop printing and return to home menu
-            if (leveling_sta ==1)   //ok
-            {
-                leveling_sta = 0;
-                if (LGT_is_printing == false)
-                {
-                    LGT_LCD.LGT_Change_Page(ID_MENU_MEASU_FINISH);
-                    disable_all_steppers();
-                }
-                break;
-            }
 		  relative_mode = false;
 		  gcode_M18_M84();
 		  LGT_is_printing = false;
@@ -13374,9 +13361,10 @@ void process_parsed_command() {
 		  LGT_LCD.LGT_Change_Page(ID_MENU_PRINT_HOME_PAUSE);
 		  break;
 	#if defined(U20_Pro) || defined(U30_Pro_AutoBed)
-	  case 2002:	// wait for levelling measuring 
+	  case 2002:	// wait for levelling measuring
 		  planner.synchronize();
 		  LGT_LCD.LGT_Change_Page(ID_MENU_MEASU_S1 + 1);
+		  LGT_LCD.LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,zprobe_zoffset * -1);
 		  break;
 	#endif // U20_Pro
 	  case 2003:      //save position and filament runout  move
@@ -13415,7 +13403,7 @@ void process_parsed_command() {
 		  }
 		break;
 #endif // LGT_MAC
-	 
+
       default: parser.unknown_command_error();
     }
     break;
