@@ -10,14 +10,18 @@ DATA Rec_Data;
 DATA Send_Data;
 duration_t Duration_Time;
 unsigned char data_storage[DATA_SIZE];
-char total_time[7];         //Total print time for each model 
+char total_time[7];         //Total print time for each model
 uint32_t total_print_time = 0;
 char printer_work_time[31];  //Total work time of printers
 int gcode_id[FILE_LIST_NUM], sel_fileid =-1;
 int gcode_num=0;
 millis_t recovery_time=0;
 uint8_t recovery_percent = 0;
-float level_z_height = zprobe_zoffset * -1;
+#if defined(U30_Pro_AutoBed)
+    float level_z_height = zprobe_zoffset * -1;
+#else
+    float level_z_height = 0.0;
+#endif
 float recovery_z_height = 0.0,recovery_E_len=0.0;
 float resume_x_position=0.0,resume_y_position=0.0,resume_e_position= 0.0;
 bool sd_init_flag = true;
@@ -109,7 +113,7 @@ void LGT_SCR::LGT_Change_Filament(int fila_len)
 		LGT_Line_To_Current(E_AXIS);
 	}
 	else                //unload filament
-	{ 
+	{
 		if (!planner.is_full())
 			planner.buffer_line_kinematic(current_position, 600, 0, current_position[E_AXIS]);
 	}
@@ -367,7 +371,7 @@ void LGT_SCR::LGT_Display_Filename()
 	uint16_t var_addr = ADDR_TXT_PRINT_FILE_ITEM_0;
     const uint16_t FileCnt = card.get_num_Files();  //FileCnt:Total number of files
 	for (int i = (FileCnt - 1); i >= 0; i--)     //Reverse order
-	//for (int i=0;i<FileCnt;i++)                
+	//for (int i=0;i<FileCnt;i++)
 	{
 		card.getfilename(i);
 		if (!card.filenameIsDir)
@@ -381,7 +385,7 @@ void LGT_SCR::LGT_Display_Filename()
 			if (gcode_num >= FILE_LIST_NUM)
 				break;
 		}
-	}	
+	}
 }
 /*************************************
 FUNCTION:	Printing SD card files to DWIN_Screen
@@ -586,7 +590,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		break;
 	case ADDR_VAL_FILA_CHANGE_TEMP:
 		filament_temp = Rec_Data.data[0];
-		break;	
+		break;
 	case ADDR_TXT_ABOUT_MAC_TIME:
 		total_print_time = eeprom_read_dword((const uint32_t*)EEPROM_INDEX);
 		LGT_Total_Time_To_String(printer_work_time, total_print_time);
@@ -951,7 +955,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 				z_home = true;
 			#endif
 			break;
-		case eBT_DIAL_MOVE_NO_TEMP_RET:   // ok button 
+		case eBT_DIAL_MOVE_NO_TEMP_RET:   // ok button
 			if (menu_move_dis_chk == 0)
 				LGT_Change_Page(ID_MENU_MOVE_0);
 			else // equal to 1 or 2
@@ -983,7 +987,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 					card.getfilename(gcode_id[sel_fileid]);
 					card.openFile(card.filename,true);
 					card.startFileprint();
-					print_job_timer.start();		
+					print_job_timer.start();
 					LGT_MAC_Send_Filename(ADDR_TXT_HOME_FILE_NAME, gcode_id[sel_fileid]);
 					delay(5);
 					menu_type = eMENU_PRINT_HOME;
@@ -1015,7 +1019,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			break;
 		case eBT_PRINT_HOME_RESUME:
 				LGT_Change_Page(ID_MENU_PRINT_HOME);
-			    do_blocking_move_to_xy(resume_x_position,resume_y_position,50); 
+			    do_blocking_move_to_xy(resume_x_position,resume_y_position,50);
 			    card.startFileprint();
 				print_job_timer.start();
 		        runout.reset();
@@ -1685,7 +1689,7 @@ pageid: page n (page 1:0001)
 buttonid:button n + return value (button 5+06:0506)
 sta:disable or enable  (0000:disable  0001:enable)
 **************************************/
-void LGT_SCR::LGT_Disable_Enable_Screen_Button(unsigned int pageid, unsigned int buttonid, unsigned int sta) 
+void LGT_SCR::LGT_Disable_Enable_Screen_Button(unsigned int pageid, unsigned int buttonid, unsigned int sta)
 {
 	memset(data_storage, 0, sizeof(data_storage));
 	data_storage[0] = Send_Data.head[0];
