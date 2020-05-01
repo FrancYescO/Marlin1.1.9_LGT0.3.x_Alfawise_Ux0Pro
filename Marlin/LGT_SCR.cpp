@@ -17,8 +17,9 @@ int gcode_id[FILE_LIST_NUM], sel_fileid =-1;
 int gcode_num=0;
 millis_t recovery_time=0;
 uint8_t recovery_percent = 0;
+char leveling_sta = 0;
 #if defined(U30_Pro_AutoBed)
-    float level_z_height = zprobe_zoffset * -1;
+    float level_z_height = zprobe_zoffset;
 #else
     float level_z_height = 0.0;
 #endif
@@ -1324,6 +1325,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			menu_measu_dis_chk = 1;
             thermalManager.setTargetHotend(0, target_extruder);
             thermalManager.setTargetBed(0);
+            level_z_height = zprobe_zoffset; //use level_z_height to show onscreen zoffset
 			#if defined(U30_Pro_AutoBed)
 				if (xyz_home == false)
 				{
@@ -1356,14 +1358,15 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			menu_measu_dis_chk = 1;
 			#if defined(U30_Pro_AutoBed)
                 //settings.reset();
-			    zprobe_zoffset = level_z_height * -1; //save the new Z Offset
+			    zprobe_zoffset = level_z_height; //save the new Z Offset
                 //Start UBL, enable it and save to EEPROM
+                leveling_sta = 1;  //set the lvelling to ok to show the levelling finished on G29 call
                 enqueue_and_echo_commands_P(PSTR("G29 P1"));
                 enqueue_and_echo_commands_P(PSTR("G29 P3"));
                 enqueue_and_echo_commands_P(PSTR("G29 S1"));
                 enqueue_and_echo_commands_P(PSTR("G29 A"));
                 enqueue_and_echo_commands_P(PSTR("M500"));
-                enqueue_and_echo_commands_P(PSTR("G29")); //Just to report the status back to screen
+                enqueue_and_echo_commands_P(PSTR("G29")); //Just to show the levelling finished screen
             #else
                 settings.reset();
                 enqueue_and_echo_commands_P(PSTR("G28"));

@@ -757,7 +757,7 @@ XYZ_CONSTS_FROM_CONFIG(signed char, home_dir, HOME_DIR);
 ////////////LGT_MAC////////////////////LGT_MAC///////////////////////////////LGT_MAC///////////////////////////
 #ifdef LGT_MAC
 	bool check_recovery = false;
-	char leveling_sta = 0;
+	extern char leveling_sta;
 	int ii_setup = 0;
 	extern float resume_e_position,resume_x_position,resume_y_position;
     extern LGT_SCR LGT_LCD;
@@ -13364,7 +13364,7 @@ void process_parsed_command() {
 	  case 2002:	// wait for levelling measuring
 		  planner.synchronize();
 		  LGT_LCD.LGT_Change_Page(ID_MENU_MEASU_S1 + 1);
-		  LGT_LCD.LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,zprobe_zoffset * -1);
+		  LGT_LCD.LGT_Send_Data_To_Screen(ADDR_VAL_LEVEL_Z_UP_DOWN,zprobe_zoffset);
 		  break;
 	#endif // U20_Pro
 	  case 2003:      //save position and filament runout  move
