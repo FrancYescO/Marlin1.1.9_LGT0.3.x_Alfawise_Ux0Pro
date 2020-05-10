@@ -18,11 +18,7 @@ int gcode_num=0;
 millis_t recovery_time=0;
 uint8_t recovery_percent = 0;
 char leveling_sta = 0;
-#if defined(U30_Pro_AutoBed)
-    float level_z_height = zprobe_zoffset;
-#else
-    float level_z_height = 0.0;
-#endif
+float level_z_height = 0.0;
 float recovery_z_height = 0.0,recovery_E_len=0.0;
 float resume_x_position=0.0,resume_y_position=0.0,resume_e_position= 0.0;
 bool sd_init_flag = true;
@@ -1361,12 +1357,13 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 			    zprobe_zoffset = level_z_height; //save the new Z Offset
                 //Start UBL, enable it and save to EEPROM
                 leveling_sta = 1;  //set the lvelling to ok to show the levelling finished on G29 call
-                enqueue_and_echo_commands_P(PSTR("G29 P1"));
-                enqueue_and_echo_commands_P(PSTR("G29 P3"));
-                enqueue_and_echo_commands_P(PSTR("G29 S1"));
-                enqueue_and_echo_commands_P(PSTR("G29 A"));
-                enqueue_and_echo_commands_P(PSTR("M500"));
-                enqueue_and_echo_commands_P(PSTR("G29")); //Just to show the levelling finished screen
+                enqueue_and_echo_commands_P(PSTR("G29 P1")); //invalidate the mesh and full probe the bed
+                enqueue_and_echo_commands_P(PSTR("G29 P3")); //fill unprobed points
+                enqueue_and_echo_commands_P(PSTR("G29 P5 C")); //set mean mesh to a 0 centered (avoid mesh shifted up by some mm)
+                enqueue_and_echo_commands_P(PSTR("G29 S1")); //save the mesh
+                enqueue_and_echo_commands_P(PSTR("G29 A")); //activate UBL
+                enqueue_and_echo_commands_P(PSTR("M500")); //save to EEPROM
+                enqueue_and_echo_commands_P(PSTR("G29")); //workaround to just to show the levelling finished on LCD
             #else
                 settings.reset();
                 enqueue_and_echo_commands_P(PSTR("G28"));

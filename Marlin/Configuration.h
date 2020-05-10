@@ -629,7 +629,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 92.599 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 102.88 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -806,7 +806,7 @@
 #if ENABLED(U30_Pro_AutoBed)
     #define X_PROBE_OFFSET_FROM_EXTRUDER -35//-23  // X offset: -left  +right  [of the nozzle]
     #define Y_PROBE_OFFSET_FROM_EXTRUDER -5//0 // Y offset: -front +behind [the nozzle]
-    #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 //0  // Z offset: -below +above  [the nozzle]
+    #define Z_PROBE_OFFSET_FROM_EXTRUDER -1.9 //0  // Z offset: -below +above  [the nozzle]
 #else
     #define X_PROBE_OFFSET_FROM_EXTRUDER -30//-23  // X offset: -left  +right  [of the nozzle]
     #define Y_PROBE_OFFSET_FROM_EXTRUDER -3//0 // Y offset: -front +behind [the nozzle]
@@ -814,7 +814,7 @@
 #endif
 
 // Certain types of probes need to stay away from edges
-#define MIN_PROBE_EDGE 10
+#define MIN_PROBE_EDGE 0
 
 // X and Y axis travel speed (mm/m) between probes
 #define XY_PROBE_SPEED 8000
@@ -828,7 +828,7 @@
 // The number of probes to perform at each point.
 //   Set to 2 for a fast/slow probe, using the second probe result.
 //   Set to 3 or more for slow probes, averaging the results.
-#define MULTIPLE_PROBING 2
+//#define MULTIPLE_PROBING 2
 
 /**
  * Z probes require clearance when deploying, stowing, and moving between
@@ -1135,7 +1135,7 @@
 
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
-  #define MESH_INSET 15              // Set Mesh bounds as an inset region of the bed
+  #define MESH_INSET 0              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 7       // Don't use more than 15 points per axis, implementation limited.
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 

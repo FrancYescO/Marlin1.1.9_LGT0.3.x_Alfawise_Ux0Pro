@@ -285,7 +285,7 @@
 	//#define ENDSTOPS_ALWAYS_ON_DEFAULT
 #else
 	//#define ENDSTOPS_ALWAYS_ON_DEFAULT
-#endif 
+#endif
 // @section extras
 
 //#define Z_LATE_ENABLE // Enable Z the last moment. Needed if your Z driver overheats.
@@ -782,7 +782,7 @@
  * See http://marlinfw.org/docs/features/lin_advance.html for full instructions.
  * Mention @Sebastianv650 on GitHub to alert the author of any issues.
  */
-//#define LIN_ADVANCE
+#define LIN_ADVANCE
 #if ENABLED(LIN_ADVANCE)
   #define LIN_ADVANCE_K 0.22  // Unit: mm compression per 1mm/s extruder speed
   //#define LA_DEBUG          // If enabled, this will generate debug information output over USB.
@@ -1030,9 +1030,9 @@
   #define FILAMENT_CHANGE_ALERT_BEEPS         10  // Number of alert beeps to play when a response is needed.
   #define PAUSE_PARK_NO_STEPPER_TIMEOUT           // Enable for XYZ steppers to stay powered on during filament change.
 
-  //#define PARK_HEAD_ON_PAUSE  
+  //#define PARK_HEAD_ON_PAUSE
 #ifdef LGT_MAC
-	#define PARK_HEAD_ON_PAUSE  
+	#define PARK_HEAD_ON_PAUSE
 #endif
   // Park the nozzle during pause and filament change.
   //#define HOME_BEFORE_FILAMENT_CHANGE           // Ensure homing has been completed prior to parking for filament change
