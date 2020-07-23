@@ -1436,6 +1436,7 @@ void LGT_SCR::LGT_Analysis_DWIN_Screen_Cmd()
 		break;
 	case ADDR_VAL_FLOW:
 		planner.flow_percentage[0] = Rec_Data.data[0];
+		planner.refresh_e_factor(0);
 		break;
 	case ADDR_VAL_MENU_TYPE:
 		menu_type = (E_MENU_TYPE)(Rec_Data.data[0]);
